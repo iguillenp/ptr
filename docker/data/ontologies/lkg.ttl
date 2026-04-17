@@ -1,0 +1,229 @@
+@prefix : <http://lkg.lynx-project.eu/def/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix eli: <http://data.europa.eu/eli/ontology#> .
+@prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix vann: <http://purl.org/vocab/vann/> .
+@prefix terms: <http://purl.org/dc/terms/> .
+@base <http://lkg.lynx-project.eu/def/> .
+
+<http://lkg.lynx-project.eu/def/> rdf:type owl:Ontology ;
+                                   owl:imports eli: ,
+                                               nif: ;
+                                   dc:creator "Víctor Rodríguez-Doncel"^^xsd:string ;
+                                   dc:publisher "The Lynx Project Consortium, http://lynx-project.eu/."^^xsd:string ;
+                                   terms:contributor "Filippo Maganza"^^xsd:string ,
+                                                     "Julián Moreno-Schneider"^^xsd:string ,
+                                                     "Socorro Bernardos"^^xsd:string ,
+                                                     "Sotiris Karampatakis"^^xsd:string ;
+                                   terms:description """Lynx is about providing better services on compliance. The added value of the Lynx services revolve around a better processing of heterogenous, multilingual documents in the legal domain. Hence, the most important document is the Lynx Document.Lynx Documents may be grouped in Collections, and may be enriched with Annotations. Thus, the main entities to deal with are three:
+
+Lynx Documents are the basic information units in Lynx: identified pieces of text.
+Collections are groups of Lynx Documents with any logical relation. There may be one collection per use case, per jurisdiction, etc.
+Annotations are enrichments of Lynx Documents, such as summaries, translation, recognized entities, etc.
+Because most of the AI algorithms dealing with documents focus on text -manipulation of images, videos or tables is less developed-, the essence of a Lynx Document is its text version. Thus, the key element in a Lynx Document is an identified piece of text. This document can be annotated with an arbitrary number of metadata elements (creation date, author, etc.), and eventually structured for a minimally attractive visual representation.
+
+Original documents are transformed as represented in the following figure: first, they are acquired by harvesters from their heterogeneous sources and formats, being structured and represented in a uniform manner. Then, they are enriched with annotations (such as named entities like persons, organisations, etc.).
+
+This ontology has been made with the purpose of supporting the representation of Lynx Documents, e.g., any document related to compliance worth to be in a Legal Knowledge Graph. This specification serves as a data model for documents in the Lynx project.
+
+In order to manipulate the data structures described in this work, we recommend using the library described in https://gitlab.com/superlynx/common/lynx_mvn.
+
+Lynx Documents are in general compliant with the NIF (NLP NLP Interchange Format) specification. Other ontologies have been also considered as a reference: see a broad list in http://lynx-project.eu/data2/reference-ontologies."""@en ;
+                                   terms:license <http://purl.org/NET/rdflicense/cc-by4.0> ;
+                                   terms:title "Legal Knowledge Graph Ontology"^^xsd:string ;
+                                   vann:preferredNamespacePrefix "lkg"^^xsd:string ;
+                                   vann:preferredNamespaceUri "http://lkg.lynx-project.eu/def/"^^xsd:string ;
+                                   rdfs:comment """This ontology has been made with the purpose of supporting the representation of Lynx Documents, e.g., any document related to compliance worth to be in a Legal Knowledge Graph. This specification serves as a data model for documents in the Lynx project.
+
+In order to manipulate the data structures described in this work, we recommend using the library described in https://gitlab.com/superlynx/common/lynx_mvn.
+
+Lynx Documents are in general compliant with the NIF (NLP NLP Interchange Format) specification. Other ontologies have been also considered as a reference: see a broad list in http://lynx-project.eu/data2/reference-ontologies."""@en ;
+                                   rdfs:label "Legal Knowledge Graph Ontology"^^xsd:string ;
+                                   owl:versionInfo "1.2.0"@en .
+
+#################################################################
+#    Datatypes
+#################################################################
+
+###  http://www.w3.org/1999/02/22-rdf-syntax-ns#langString
+rdf:langString rdf:type rdfs:Datatype .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://lkg.lynx-project.eu/def/hasDbpedia
+:hasDbpedia rdf:type owl:ObjectProperty ;
+            rdfs:domain :Metadata ;
+            rdfs:range owl:Thing ;
+            rdfs:comment "Link to the equivalent dbpedia version. Single URI."@en ;
+            rdfs:label "has DBpedia"@en .
+
+
+###  http://lkg.lynx-project.eu/def/hasEli
+:hasEli rdf:type owl:ObjectProperty ;
+        rdfs:domain :Metadata ;
+        rdfs:range [ rdf:type owl:Class ;
+                     owl:unionOf ( eli:LegalExpression
+                                   eli:LegalResource
+                                 )
+                   ] ;
+        rdfs:comment "Official identifier (ELI, ECLI or equivalent). See https://eur-lex.europa.eu/eli-register/about.html"@en ;
+        rdfs:label "has Eli"@en .
+
+
+###  http://lkg.lynx-project.eu/def/metadata
+:metadata rdf:type owl:ObjectProperty ,
+                   owl:FunctionalProperty ;
+          rdfs:domain :LynxDocument ;
+          rdfs:range :Metadata ;
+          rdfs:comment "Document metadata. See the properties under this elements in http://lynx-project.eu/doc/lkg/#idtablemetadataelements"@en ;
+          rdfs:label "metadata"@en .
+
+
+###  http://lkg.lynx-project.eu/def/parent
+:parent rdf:type owl:ObjectProperty ;
+        rdfs:domain :LynxDocumentPart ;
+        rdfs:range [ rdf:type owl:Class ;
+                     owl:unionOf ( :LynxDocument
+                                   :LynxDocumentPart
+                                 )
+                   ] ;
+        rdfs:comment "Parent of the part. Nested parts are allowed."@en ;
+        rdfs:label "parent"@en .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://lkg.lynx-project.eu/def/accessGroup
+:accessGroup rdf:type owl:DatatypeProperty ;
+             rdfs:domain :Metadata ;
+             rdfs:range xsd:string ;
+             rdfs:comment "Declares a group of documents for which access can be granted or not"@en ;
+             rdfs:label "access group"@en .
+
+
+###  http://lkg.lynx-project.eu/def/hasAuthority
+:hasAuthority rdf:type owl:DatatypeProperty ;
+              rdfs:domain :Metadata ;
+              rdfs:range xsd:string ;
+              rdfs:comment "Authority issuing the document. Single string with no language tag."@en ;
+              rdfs:label "has authority"@en .
+
+
+###  http://lkg.lynx-project.eu/def/hasPDF
+:hasPDF rdf:type owl:DatatypeProperty ;
+        rdfs:domain :Metadata ;
+        rdfs:range xsd:string ;
+        rdfs:comment "Link to the PDF version. Single URI."@en ;
+        rdfs:label "has PDF"@en .
+
+
+###  http://lkg.lynx-project.eu/def/hasWikipedia
+:hasWikipedia rdf:type owl:DatatypeProperty ;
+              rdfs:domain :Metadata ;
+              rdfs:range xsd:string ;
+              rdfs:comment "Link to the equivalent wikipedia version. Single URI."@en ;
+              rdfs:label "has Wikipedia"@en .
+
+
+###  http://lkg.lynx-project.eu/def/summary
+:summary rdf:type owl:DatatypeProperty ;
+         rdfs:domain :Metadata ;
+         rdfs:range rdf:langString ;
+         rdfs:comment "Summary of the text of the document. Language-tagged strings (one per language)."@en ;
+         rdfs:label "summary"@en .
+
+
+###  http://lkg.lynx-project.eu/def/wasExtractedFrom
+:wasExtractedFrom rdf:type owl:DatatypeProperty ;
+                  rdfs:domain :Metadata ;
+                  rdfs:range xsd:string ;
+                  rdfs:comment "Original URL if the document was extracted from the web"@en ;
+                  rdfs:label "was extracted from"@en .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://lkg.lynx-project.eu/def/Agreement
+:Agreement rdf:type owl:Class ;
+           rdfs:subClassOf :LynxDocument ;
+           rdfs:comment "Type of LynxDocument for private or public agreements"@en ;
+           rdfs:label "Agreement"@en .
+
+
+###  http://lkg.lynx-project.eu/def/CaseLaw
+:CaseLaw rdf:type owl:Class ;
+         rdfs:subClassOf :LynxDocument ;
+         rdfs:comment "Type of LynxDocument for judgments or related documents"@en ;
+         rdfs:label "Case Law"@en .
+
+
+###  http://lkg.lynx-project.eu/def/CollectiveAgreement
+:CollectiveAgreement rdf:type owl:Class ;
+                     rdfs:subClassOf :Agreement ;
+                     rdfs:comment "Type of LynxDocument for collective agreements, collective labour agreements (CLA) or collective bargaining agreements (CBA)"@en ;
+                     rdfs:label "Collective Agreement"@en .
+
+
+###  http://lkg.lynx-project.eu/def/Legislation
+:Legislation rdf:type owl:Class ;
+             rdfs:subClassOf :LynxDocument ;
+             rdfs:comment "Type of LynxDocument for legislation (constitutions, acts, royal decrees, presidential decrees, etc.)"@en ;
+             rdfs:label "Legislation"@en .
+
+
+###  http://lkg.lynx-project.eu/def/LynxAnnotation
+:LynxAnnotation rdf:type owl:Class ;
+                rdfs:subClassOf nif:Annotation ;
+                rdfs:comment "Declares a NIF annotation"@en ;
+                rdfs:label "Lynx Annotation"@en .
+
+
+###  http://lkg.lynx-project.eu/def/LynxDocument
+:LynxDocument rdf:type owl:Class ;
+              rdfs:subClassOf nif:Context ;
+              rdfs:comment "Any document related to compliance worth to be in a Legal Knowledge Graph. LynxDocuments are NIF documents because the lkg:LynxDocument is a subclass of nif:Context: they can serve as the context for NIF annotations. The NIF ontology is available online. Of course, explicitly declaring that the LynxDocument is also a nif:Context is possible. There is no restriction on how LynxDocuments are identified --except that the identifiers must be URIs. A possible pattern is: http://USE-CASE-PART/res/slug. The general type of a document can be specified by making the LynxDocument to have an additional type, such as eli:Legislation, lkg:Agreement (and lkg:CollectiveAgreement), lkg:CaseLaw or lkg:TechnicalSpecification. The more specific type of document can be given using the property rank property in the metadata, namely the eli:type_document in RDF, and whose recommended values are given in Annex I in http://lynx-project.eu/doc/lkg/."@en ;
+              rdfs:label "Lynx Document"@en .
+
+
+###  http://lkg.lynx-project.eu/def/LynxDocumentPart
+:LynxDocumentPart rdf:type owl:Class ;
+                  rdfs:subClassOf nif:Structure ;
+                  rdfs:comment "Part of a LynxDocument."@en ;
+                  rdfs:label "Lynx Document Part"@en .
+
+
+###  http://lkg.lynx-project.eu/def/Metadata
+:Metadata rdf:type owl:Class ;
+          rdfs:subClassOf eli:LegalExpression ;
+          rdfs:comment "Declares the metadata element of a LynxDocument. As an \"intellectual realisation of a legal resource\", it is considered an eli:LegalExpression."@en ;
+          rdfs:label "Metadata"@en .
+
+
+###  http://lkg.lynx-project.eu/def/Standard
+:Standard rdf:type owl:Class ;
+          rdfs:subClassOf :TechnicalSpecification ;
+          rdfs:comment "Type of LynxDocument for Standards"@en ;
+          rdfs:label "Standard"@en .
+
+
+###  http://lkg.lynx-project.eu/def/TechnicalSpecification
+:TechnicalSpecification rdf:type owl:Class ;
+                        rdfs:subClassOf :LynxDocument ;
+                        rdfs:comment "Type of LynxDocument for Technical Specifications"@en ;
+                        rdfs:label "Technical Specification"@en .
+
+
+###  Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi

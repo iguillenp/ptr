@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  graphdb:
+    image: ontotext/graphdb:10.6.4
+    container_name: graphdb-politicaltr
+    environment:
+      - GDB_HEAP_SIZE=16G
+      - GDB_JAVA_OPTS=-Dgraphdb.connector.port=7200 -Dgraphdb.workbench.importDirectory=/shared-data
+    ports:
+      - "7300:7200"
+    user: "${UID}:${GID}"  # Run container as your user
+    volumes:
+      - politicaltr:/opt/graphdb/home/data
+      - ./data:/shared-data  # Bind mount for shared folder
+    networks:
+      - politicaltr
+
+volumes:
+  politicaltr:
+
+networks:
+  politicaltr:

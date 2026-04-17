@@ -1,0 +1,30 @@
+[project]
+name = "kr2026"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "annonym",email = "annonym@annonym.com"}
+]
+readme = "README.md"
+requires-python = ">=3.10,<3.15"
+dependencies = [
+    "pandas (>=2.3.3,<3.0.0)",
+    "requests (>=2.32.5,<3.0.0)",
+    "sparqlwrapper (>=2.0.0,<3.0.0)",
+    "ruyaml (>=0.91.0,<0.92.0)",
+    "yatter (>=2.0.3,<3.0.0)",
+    "dotenv (>=0.9.9,<0.10.0)",
+    "ipykernel (>=7.0.1,<8.0.0)",
+    "matplotlib (>=3.10.7,<4.0.0)",
+    "seaborn (>=0.13.2,<0.14.0)",
+    "transformers (>=4.57.1,<5.0.0)",
+    "torch (>=2.9.0,<3.0.0)",
+    "scikit-learn (>=1.7.2,<2.0.0)",
+    "openpyxl (>=3.1.5,<4.0.0)",
+    "isodate (>=0.7.2,<0.8.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

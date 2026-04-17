@@ -1,0 +1,89 @@
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcam: <http://purl.org/dc/dcam/>
+PREFIX eli: <http://data.europa.eu/eli/ontology#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX lkg: <http://lkg.lynx-project.eu/def/>
+PREFIX nif-core: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX podio: <http://w3id.org/podio#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <http://schema.org/>
+PREFIX sioc: <http://rdfs.org/sioc/ns#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX terms: <http://purl.org/dc/terms/>
+PREFIX vann: <http://purl.org/vocab/vann/>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX time: <http://www.w3.org/2006/time#>
+
+SELECT (CONCAT(
+    "Question: Premise: '", ?discourseContent, "'\n",
+    "Hypothesis: Directly followed the period ", ?periodLabel, "\n\n", 
+    "Choices:\nA) entail \nB) not entail"
+  ) AS ?question)
+  (IF(EXISTS {
+        ?discourseURI time:inside ?p1 .
+        ?p1 time:intervalAfter ?periodURI .
+     },
+     "A)", "B)") AS ?answer)
+WHERE {
+    
+    {SELECT ?discourseURI ?d1 ?d2 ?correct
+        WHERE {
+            BIND(<KG_DISCOURSE_CASE_URI> AS ?discourseURI)
+
+            ?discourseURI time:inside   ?periodCurrent .
+
+            ?periodCurrent  terms:type "Campaign" .
+            ?periodCurrent  time:intervalAfter ?periodPreceding .
+
+            # correct option: preceding period
+            BIND(?periodPreceding AS ?correct)        
+
+            # candidate for d1: current period
+            BIND(?periodCurrent AS ?d1)
+            
+            {            
+                # The following period exists
+                FILTER EXISTS {
+                    ?periodCurrent time:intervalBefore ?periodFollowing .
+                }
+                ?periodCurrent time:intervalBefore ?periodFollowing .
+                # candidate for d2: following period
+                BIND(?periodFollowing AS ?d2)
+            } UNION
+            {
+                # There is no subsequent period.
+                FILTER NOT EXISTS {
+                    ?periodCurrent time:intervalBefore ?periodFollowing .
+                }
+
+                # candidate for d2: the period prior to the previous one
+                ?periodPreceding time:intervalAfter ?periodPrecedingPreceding.
+                BIND(?periodPrecedingPreceding AS ?d2)
+            }
+        }
+        LIMIT 1}
+
+    ?discourseURI   podio:content ?discourseContent.
+
+    BIND(RAND() AS ?r)
+
+    {
+        FILTER(?r < 0.5)
+        BIND(?d1 AS ?periodURI) .
+        ?periodURI rdfs:label ?periodLabel .
+    }
+    UNION
+    {
+        FILTER(?r >= 0.5)
+        BIND(?d2 AS ?periodURI) .
+        ?periodURI rdfs:label ?periodLabel .
+    }
+}

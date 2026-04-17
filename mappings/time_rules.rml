@@ -1,0 +1,379 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix xml: <http://www.w3.org/XML/1998/namespace>.
+@prefix schema: <http://schema.org/>.
+@prefix terms: <http://purl.org/dc/terms/>.
+@prefix dc: <http://purl.org/dc/elements/1.1/>.
+@prefix dcam: <http://purl.org/dc/dcam/>.
+@prefix vann: <http://purl.org/vocab/vann/>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix sioc: <http://rdfs.org/sioc/ns#>.
+@prefix lkg: <http://lkg.lynx-project.eu/def/>.
+@prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#>.
+@prefix eli: <http://data.europa.eu/eli/ontology#>.
+@prefix time: <http://www.w3.org/2006/time#>.
+@prefix podio: <http://w3id.org/podio#>.
+@prefix ptr: <http://w3id.org/podio/resource/>.
+@prefix rr: <http://www.w3.org/ns/r2rml#>.
+@prefix rml: <http://semweb.mmlab.be/ns/rml#>.
+@prefix ql: <http://semweb.mmlab.be/ns/ql#>.
+@prefix d2rq: <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#>.
+@prefix formats: <http://www.w3.org/ns/formats/>.
+@prefix comp: <http://semweb.mmlab.be/ns/rml-compression#>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix fnml: <http://semweb.mmlab.be/ns/fnml#>.
+@prefix grel: <http://users.ugent.be/~bjdmeest/function/grel.ttl#>.
+@base <http://example.com/ns#>.
+
+
+<Instants_0> a rr:TriplesMap;
+
+	rml:logicalSource [
+		a rml:LogicalSource;
+		rml:source "mappings/resources/instants.csv";
+		rml:referenceFormulation ql:CSV
+
+	];
+	rr:subjectMap [
+		a rr:SubjectMap;
+		rr:template "http://w3id.org/podio/resource/{instant}";
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant rdf:type;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:constant time:Instant;
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:inXSDDateTime;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "datetime";
+			rr:datatype xsd:dateTime
+		];
+	].
+
+
+<Elections_0> a rr:TriplesMap;
+
+	rml:logicalSource [
+		a rml:LogicalSource;
+		rml:source "mappings/resources/elections.csv";
+		rml:referenceFormulation ql:CSV
+
+	];
+	rr:subjectMap [
+		a rr:SubjectMap;
+		rr:template "http://w3id.org/podio/resource/{election_id}";
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant rdf:type;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:constant time:DateTimeInterval;
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:hasBeginning;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{begin}";
+			rr:termType rr:IRI
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:hasEnd;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{end}";
+			rr:termType rr:IRI
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:hasDateTimeDescription;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "description";
+			rr:datatype xsd:string
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:xsdDateTime;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "datetime";
+			rr:datatype xsd:dateTime
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant terms:type;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "type";
+			rr:datatype xsd:string
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant schema:areaServed;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{area}";
+			rr:termType rr:IRI
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:intervalAfter;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{after}";
+			rr:termType rr:IRI
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:intervalFinishes;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{finishes}";
+			rr:termType rr:IRI
+		];
+	].
+
+
+<ElectionsInverseAfter_0> a rr:TriplesMap;
+
+	rml:logicalSource [
+		a rml:LogicalSource;
+		rml:source "mappings/resources/elections.csv";
+		rml:referenceFormulation ql:CSV
+
+	];
+	rr:subjectMap [
+		a rr:SubjectMap;
+		rr:template "http://w3id.org/podio/resource/{after}";
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:intervalBefore;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{election_id}";
+			rr:termType rr:IRI
+		];
+	].
+
+
+<ElectionsInverseFinishes_0> a rr:TriplesMap;
+
+	rml:logicalSource [
+		a rml:LogicalSource;
+		rml:source "mappings/resources/elections.csv";
+		rml:referenceFormulation ql:CSV
+
+	];
+	rr:subjectMap [
+		a rr:SubjectMap;
+		rr:template "http://w3id.org/podio/resource/{finishes}";
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:intervalFinishedBy;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{election_id}";
+			rr:termType rr:IRI
+		];
+	].
+
+
+<Campaigns_0> a rr:TriplesMap;
+
+	rml:logicalSource [
+		a rml:LogicalSource;
+		rml:source "mappings/resources/campaigns.csv";
+		rml:referenceFormulation ql:CSV
+
+	];
+	rr:subjectMap [
+		a rr:SubjectMap;
+		rr:template "http://w3id.org/podio/resource/{campaign_id}";
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant rdf:type;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:constant time:ProperInterval;
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:hasBeginning;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{begin}";
+			rr:termType rr:IRI
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:hasEnd;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{end}";
+			rr:termType rr:IRI
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant schema:areaServed;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{area}";
+			rr:termType rr:IRI
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:hasXSDDuration;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "duration";
+			rr:datatype xsd:duration
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant rdfs:label;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "description";
+			rr:datatype xsd:string
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant terms:type;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "type";
+			rr:datatype xsd:string
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:intervalAfter;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{after}";
+			rr:termType rr:IRI
+		];
+	].
+
+
+<CampaignsInverseAfter_0> a rr:TriplesMap;
+
+	rml:logicalSource [
+		a rml:LogicalSource;
+		rml:source "mappings/resources/campaigns.csv";
+		rml:referenceFormulation ql:CSV
+
+	];
+	rr:subjectMap [
+		a rr:SubjectMap;
+		rr:template "http://w3id.org/podio/resource/{after}";
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:intervalBefore;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{campaign_id}";
+			rr:termType rr:IRI
+		];
+	].
+
+
+<Insides_0> a rr:TriplesMap;
+
+	rml:logicalSource [
+		a rml:LogicalSource;
+		rml:source "mappings/resources/insides.csv";
+		rml:referenceFormulation ql:CSV
+
+	];
+	rr:subjectMap [
+		a rr:SubjectMap;
+		rr:template "http://w3id.org/podio/resource/{id_discourse}";
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant time:inside;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{id_interval}";
+			rr:termType rr:IRI
+		];
+	].
+
+

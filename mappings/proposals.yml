@@ -1,0 +1,60 @@
+prefixes:
+    #Core imports
+    rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    rdfs: "http://www.w3.org/2000/01/rdf-schema#"
+    xsd: "http://www.w3.org/2001/XMLSchema#"
+    xml: "http://www.w3.org/XML/1998/namespace"
+    #Vocabulary imports
+    schema: "http://schema.org/"
+    terms: "http://purl.org/dc/terms/"
+    dc: "http://purl.org/dc/elements/1.1/"
+    dcam: "http://purl.org/dc/dcam/"
+    vann: "http://purl.org/vocab/vann/"
+    skos: "http://www.w3.org/2004/02/skos/core#"
+    #Ontology imports
+    owl: "http://www.w3.org/2002/07/owl#"
+    foaf: "http://xmlns.com/foaf/0.1/"
+    sioc: "http://rdfs.org/sioc/ns#"
+    lkg: "http://lkg.lynx-project.eu/def/"
+    nif: "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#"
+    eli: "http://data.europa.eu/eli/ontology#"
+    time: "http://www.w3.org/2006/time#"
+    #Knowledge graph domain declaration
+    podio: "http://w3id.org/podio#" # URL to ontoology
+    ptr: "http://w3id.org/podio/resource/"
+
+sources:
+    data: [mappings/resources/proposals.csv~csv ]
+
+
+mappings:
+    Proposals_p: # Properties
+        sources:
+          - data
+        s: ptr:$(ProposalId)
+        po:
+          - [a, podio:PolicyProposal]
+          - [podio:content, $(text), xsd:string]              # An unambiguous reference to the resource within a given context.
+          - [terms:identifier, $(ProposalId), xsd:string]     # An unambiguous reference to the resource within a given context.
+          - [terms:created, $(Created), xsd:dateTime]         # Date of creation of the resource.
+          - [rdfs:label, $(Description), xsd:string]          # provide a human-readable version of a resource's name.
+          - [terms:description, $(Description), xsd:string]   # An account of the resource.
+          - [terms:source, $(Source), xsd:string]             # An account of the resource.
+          - [schema:wordCount, $(length), xsd:integer]     # The number of words in the text of the resource.
+          - [schema:areaServed, ptr:$(area)~iri]          # The area of action of the proposal
+
+    Proposals_op: # Object Properties
+        sources:
+          - data
+        s: ptr:$(ProposalId)
+        po:
+          - [terms:publisher, $(AgentUri)~iri]                 # An account of the resource.
+          - [terms:creator, $(AgentUri)~iri]                   # An account of the resource.
+          - [terms:isPartOf, ptr:$(PartiManifestoId)~iri]    # An account of the resource.
+
+    Manifesto_op: # Object Properties
+        sources:
+          - data
+        s: ptr:$(PartiManifestoId)
+        po:
+          - [terms:hasPart, ptr:$(ProposalId)~iri]

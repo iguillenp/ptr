@@ -1,0 +1,154 @@
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX dcam: <http://purl.org/dc/dcam/>
+PREFIX eli: <http://data.europa.eu/eli/ontology#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX lkg: <http://lkg.lynx-project.eu/def/>
+PREFIX nif-core: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX podio: <http://w3id.org/podio#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX schema: <http://schema.org/>
+PREFIX sioc: <http://rdfs.org/sioc/ns#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+PREFIX terms: <http://purl.org/dc/terms/>
+PREFIX vann: <http://purl.org/vocab/vann/>
+PREFIX xml: <http://www.w3.org/XML/1998/namespace>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#>
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX wikibase: <http://wikiba.se/ontology#>
+PREFIX bd: <http://www.bigdata.com/rdf#>
+PREFIX time: <http://www.w3.org/2006/time#>
+
+
+SELECT (CONCAT(
+    "Question:Continue the following political discourse, which was published following ", ?periodPrecedingLabel, ": \n'", ?correctFirstPart, "'\n",
+    "Choices:\nA) ", ?opt1, "\nB) ", ?opt2, "\nC) ", ?opt3
+  ) AS ?question)
+  (IF(?correctSecondPart = ?opt1, "A)",
+      IF(?correctSecondPart = ?opt2, "B)",
+         IF(?correctSecondPart = ?opt3, "C)", "N/A")
+      )
+    ) AS ?answer)
+WHERE {
+    {SELECT ?periodPrecedingLabel ?d1 ?d2 ?correct
+    WHERE {
+        BIND(<KG_DISCOURSE_CASE_URI> AS ?discourseURI)
+
+        ?discourseURI time:inside   ?periodCurrent .
+        ?periodCurrent  terms:type "Campaign".
+
+        ?periodCurrent  time:intervalAfter ?periodPreceding .        
+        ?periodPreceding rdfs:label ?periodPrecedingLabel .
+
+
+        {
+            # candidate for d1: something within the previous period
+            ?d1 time:inside ?periodPreceding ;
+                schema:wordCount ?d1Words .
+        } 
+        
+        {            
+            # The following period exists
+            FILTER EXISTS {
+                ?periodCurrent time:intervalBefore ?periodFollowing .
+            }
+            ?periodCurrent time:intervalBefore ?periodFollowing .
+            # candidate for d2: something within the following period
+            ?d2 time:inside ?periodFollowing ;
+                schema:wordCount ?d2Words .
+            FILTER(?d2Words >= 70)
+        
+        } UNION
+        {
+            # There is no subsequent period.
+            FILTER NOT EXISTS {
+                ?periodCurrent time:intervalBefore ?periodFollowing .
+            }
+            # candidate for d2: something within the period prior to the previous one
+            ?periodPreceding time:intervalAfter ?periodPrecedingPreceding.
+            ?d2 time:inside ?periodPrecedingPreceding;
+                schema:wordCount ?d2Words .
+            FILTER(?d2Words >= 70)
+        }
+        BIND(?discourseURI AS ?correct)
+        FILTER(?d1Words >= 70)                    
+    } ORDER BY RAND() LIMIT 1 }
+
+
+    ?correct podio:content ?correctLabel.
+    ?d1 podio:content ?distractor1Label.
+    ?d2 podio:content ?distractor2Label.
+    
+    BIND(STR(?correctLabel) AS ?txt_1)
+    BIND(STRLEN(?txt_1) AS ?len_1)
+    BIND(xsd:integer(?len_1 / 2) AS ?mid_1)
+    BIND(SUBSTR(?txt_1, 1, ?mid_1 + 50) AS ?prefix_1)
+
+    BIND(REPLACE(?prefix_1, "^(.*)\\s[^\\s]*$", "$1") AS ?correctFirstPart)
+    BIND(SUBSTR(?txt_1, STRLEN(?correctFirstPart) + 2) AS ?correctSecondPart)
+
+
+    BIND(STR(?distractor1Label) AS ?txt_2)
+    BIND(STRLEN(?txt_2) AS ?len_2)
+    BIND(xsd:integer(?len_2 / 2) AS ?mid_2)
+    BIND(SUBSTR(?txt_2, 1, ?mid_2 + 50) AS ?prefix_2)
+
+    BIND(REPLACE(?prefix_2, "^(.*)\\s[^\\s]*$", "$1") AS ?distractor1FirstPart)
+    BIND(SUBSTR(?txt_2, STRLEN(?distractor1FirstPart) + 2) AS ?distractor1SecondPart)
+
+
+    BIND(STR(?distractor2Label) AS ?txt_3)
+    BIND(STRLEN(?txt_3) AS ?len_3)
+    BIND(xsd:integer(?len_3 / 2) AS ?mid_3)
+    BIND(SUBSTR(?txt_3, 1, ?mid_3 + 50) AS ?prefix_3)
+
+    BIND(REPLACE(?prefix_3, "^(.*)\\s[^\\s]*$", "$1") AS ?distractor2FirstPart)
+    BIND(SUBSTR(?txt_3, STRLEN(?distractor2FirstPart) + 2) AS ?distractor2SecondPart)
+
+    BIND(RAND() AS ?r)
+
+    {
+        FILTER(?r < 0.16)
+        BIND(?correctSecondPart     AS ?opt1)
+        BIND(?distractor1SecondPart AS ?opt2)
+        BIND(?distractor2SecondPart AS ?opt3)
+    }
+    UNION
+    {
+        FILTER(?r >= 0.16 && ?r < 0.33)
+        BIND(?correctSecondPart     AS ?opt1)
+        BIND(?distractor2SecondPart AS ?opt2)
+        BIND(?distractor1SecondPart AS ?opt3)
+    }
+    UNION
+    {
+        FILTER(?r >= 0.33 && ?r < 0.5)
+        BIND(?distractor1SecondPart AS ?opt1)
+        BIND(?correctSecondPart     AS ?opt2)
+        BIND(?distractor2SecondPart AS ?opt3)
+    }
+    UNION
+    {
+        FILTER(?r >= 0.5 && ?r < 0.66)
+        BIND(?distractor2SecondPart AS ?opt1)
+        BIND(?correctSecondPart     AS ?opt2)
+        BIND(?distractor1SecondPart AS ?opt3)
+    }
+    UNION
+    {
+        FILTER(?r >= 0.66 && ?r < 0.83)
+        BIND(?distractor1SecondPart AS ?opt1)
+        BIND(?distractor2SecondPart AS ?opt2)
+        BIND(?correctSecondPart     AS ?opt3)
+    }
+    UNION
+    {
+        FILTER(?r >= 0.83 && ?r <= 1.0)
+        BIND(?distractor2SecondPart AS ?opt1)
+        BIND(?distractor1SecondPart AS ?opt2)
+        BIND(?correctSecondPart     AS ?opt3)
+    }
+}

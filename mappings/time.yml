@@ -1,0 +1,96 @@
+prefixes:
+    #Core imports
+    rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    rdfs: "http://www.w3.org/2000/01/rdf-schema#"
+    xsd: "http://www.w3.org/2001/XMLSchema#"
+    xml: "http://www.w3.org/XML/1998/namespace"
+    #Vocabulary imports
+    schema: "http://schema.org/"
+    terms: "http://purl.org/dc/terms/"
+    dc: "http://purl.org/dc/elements/1.1/"
+    dcam: "http://purl.org/dc/dcam/"
+    vann: "http://purl.org/vocab/vann/"
+    skos: "http://www.w3.org/2004/02/skos/core#"
+    #Ontology imports
+    owl: "http://www.w3.org/2002/07/owl#"
+    foaf: "http://xmlns.com/foaf/0.1/"
+    sioc: "http://rdfs.org/sioc/ns#"
+    lkg: "http://lkg.lynx-project.eu/def/"
+    nif: "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#"
+    eli: "http://data.europa.eu/eli/ontology#"
+    time: "http://www.w3.org/2006/time#"
+    #Knowledge graph domain declaration
+    podio: "http://w3id.org/podio#" # URL to ontoology
+    ptr: "http://w3id.org/podio/resource/"
+
+sources:
+    instants: [mappings/resources/instants.csv~csv ]
+    elections: [mappings/resources/elections.csv~csv ]
+    campaigns: [mappings/resources/campaigns.csv~csv ]
+    insides: [mappings/resources/insides.csv~csv ]
+
+mappings:
+    Instants:
+        sources:
+          - instants
+        s: ptr:$(instant)
+        po:
+          - [a, time:Instant]
+          - [time:inXSDDateTime, $(datetime), xsd:dateTime]   # The dateTime of the instant.
+
+    Elections:
+        sources:
+          - elections
+        s: ptr:$(election_id)
+        po:
+          - [a, time:DateTimeInterval]
+          - [time:hasBeginning, ptr:$(begin)~iri]          # The beginning of the interval.
+          - [time:hasEnd, ptr:$(end)~iri]                  # The end of the interval.
+          - [time:hasDateTimeDescription, $(description), xsd:string]  # A description of the date-time interval.
+          - [time:xsdDateTime, $(datetime), xsd:dateTime]   # The xsd:dateTime representation of the interval.
+          - [terms:type, $(type), xsd:string]               # The type of the election.
+          - [schema:areaServed, ptr:$(area)~iri]          # The area where the election took place.
+          - [time:intervalAfter, ptr:$(after)~iri]        # The interval that immediately precedes this one.
+          - [time:intervalFinishes, ptr:$(finishes)~iri]  # The interval that this one finishes.
+    
+    ElectionsInverseAfter:
+        sources:
+          - elections
+        s: ptr:$(after)
+        po:
+          - [time:intervalBefore, ptr:$(election_id)~iri]  # The interval that immediately follows this one.
+
+    ElectionsInverseFinishes:
+        sources:
+          - elections
+        s: ptr:$(finishes)
+        po:
+          - [time:intervalFinishedBy, ptr:$(election_id)~iri]  # The interval that immediately follows this one.
+
+    Campaigns:
+        sources:
+          - campaigns
+        s: ptr:$(campaign_id)
+        po:
+          - [a, time:ProperInterval]
+          - [time:hasBeginning, ptr:$(begin)~iri]           # The beginning of the campaign interval.]
+          - [time:hasEnd, ptr:$(end)~iri]                   # The end of the campaign interval.
+          - [schema:areaServed, ptr:$(area)~iri]            # The area where the campaign took place.
+          - [time:hasXSDDuration, $(duration), xsd:duration]  # The duration of the campaign interval.
+          - [rdfs:label, $(description), xsd:string]          # A description of the campaign interval.
+          - [terms:type, $(type), xsd:string]                 # The type of the interval
+          - [time:intervalAfter, ptr:$(after)~iri]          # The interval that immediately precedes this one.
+
+    CampaignsInverseAfter:
+        sources:
+          - campaigns
+        s: ptr:$(after)
+        po:
+          - [time:intervalBefore, ptr:$(campaign_id)~iri]   # The interval that immediately follows this one.
+
+    Insides:
+        sources:
+          - insides
+        s: ptr:$(id_discourse)
+        po:
+          - [time:inside, ptr:$(id_interval)~iri]

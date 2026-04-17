@@ -1,0 +1,38 @@
+prefixes:
+    #Core imports
+    rdf: "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    rdfs: "http://www.w3.org/2000/01/rdf-schema#"
+    xsd: "http://www.w3.org/2001/XMLSchema#"
+    xml: "http://www.w3.org/XML/1998/namespace"
+    #Vocabulary imports
+    schema: "http://schema.org/"
+    terms: "http://purl.org/dc/terms/"
+    dc: "http://purl.org/dc/elements/1.1/"
+    dcam: "http://purl.org/dc/dcam/"
+    vann: "http://purl.org/vocab/vann/"
+    skos: "http://www.w3.org/2004/02/skos/core#"
+    #Ontology imports
+    owl: "http://www.w3.org/2002/07/owl#"
+    foaf: "http://xmlns.com/foaf/0.1/"
+    sioc: "http://rdfs.org/sioc/ns#"
+    lkg: "http://lkg.lynx-project.eu/def/"
+    nif: "http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#"
+    eli: "http://data.europa.eu/eli/ontology#"
+    time: "http://www.w3.org/2006/time#"
+    #Knowledge graph domain declaration
+    podio: "http://w3id.org/podio#" # URL to ontoology
+    ptr: "http://w3id.org/podio/resource/"
+
+sources:
+    data: [mappings/resources/areas.csv~csv ]
+
+
+mappings:
+    areas: # Properties
+        sources:
+          - data
+        s: ptr:$(area_name)
+        po:
+          - [a, schema:GeoShape]
+          - [owl:sameAs, $(area_wd_id)~iri]   # An unambiguous reference to the resource within a given context.
+          - [rdfs:label, $(area_name), xsd:string]                # provide a human-readable version of a resource's name.

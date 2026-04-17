@@ -1,0 +1,215 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix xml: <http://www.w3.org/XML/1998/namespace>.
+@prefix schema: <http://schema.org/>.
+@prefix terms: <http://purl.org/dc/terms/>.
+@prefix dc: <http://purl.org/dc/elements/1.1/>.
+@prefix dcam: <http://purl.org/dc/dcam/>.
+@prefix vann: <http://purl.org/vocab/vann/>.
+@prefix skos: <http://www.w3.org/2004/02/skos/core#>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix sioc: <http://rdfs.org/sioc/ns#>.
+@prefix lkg: <http://lkg.lynx-project.eu/def/>.
+@prefix nif: <http://persistence.uni-leipzig.org/nlp2rdf/ontologies/nif-core#>.
+@prefix eli: <http://data.europa.eu/eli/ontology#>.
+@prefix time: <http://www.w3.org/2006/time#>.
+@prefix podio: <http://w3id.org/podio#>.
+@prefix ptr: <http://w3id.org/podio/resource/>.
+@prefix rr: <http://www.w3.org/ns/r2rml#>.
+@prefix rml: <http://semweb.mmlab.be/ns/rml#>.
+@prefix ql: <http://semweb.mmlab.be/ns/ql#>.
+@prefix d2rq: <http://www.wiwiss.fu-berlin.de/suhl/bizer/D2RQ/0.1#>.
+@prefix formats: <http://www.w3.org/ns/formats/>.
+@prefix comp: <http://semweb.mmlab.be/ns/rml-compression#>.
+@prefix void: <http://rdfs.org/ns/void#>.
+@prefix fnml: <http://semweb.mmlab.be/ns/fnml#>.
+@prefix grel: <http://users.ugent.be/~bjdmeest/function/grel.ttl#>.
+@base <http://example.com/ns#>.
+
+
+<Proposals_p_0> a rr:TriplesMap;
+
+	rml:logicalSource [
+		a rml:LogicalSource;
+		rml:source "mappings/resources/proposals.csv";
+		rml:referenceFormulation ql:CSV
+
+	];
+	rr:subjectMap [
+		a rr:SubjectMap;
+		rr:template "http://w3id.org/podio/resource/{ProposalId}";
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant rdf:type;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:constant podio:PolicyProposal;
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant podio:content;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "text";
+			rr:datatype xsd:string
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant terms:identifier;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "ProposalId";
+			rr:datatype xsd:string
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant terms:created;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "Created";
+			rr:datatype xsd:dateTime
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant rdfs:label;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "Description";
+			rr:datatype xsd:string
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant terms:description;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "Description";
+			rr:datatype xsd:string
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant terms:source;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "Source";
+			rr:datatype xsd:string
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant schema:wordCount;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "length";
+			rr:datatype xsd:integer
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant schema:areaServed;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{area}";
+			rr:termType rr:IRI
+		];
+	].
+
+
+<Proposals_op_0> a rr:TriplesMap;
+
+	rml:logicalSource [
+		a rml:LogicalSource;
+		rml:source "mappings/resources/proposals.csv";
+		rml:referenceFormulation ql:CSV
+
+	];
+	rr:subjectMap [
+		a rr:SubjectMap;
+		rr:template "http://w3id.org/podio/resource/{ProposalId}";
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant terms:publisher;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "AgentUri";
+			rr:termType rr:IRI
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant terms:creator;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rml:reference "AgentUri";
+			rr:termType rr:IRI
+		];
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant terms:isPartOf;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{PartiManifestoId}";
+			rr:termType rr:IRI
+		];
+	].
+
+
+<Manifesto_op_0> a rr:TriplesMap;
+
+	rml:logicalSource [
+		a rml:LogicalSource;
+		rml:source "mappings/resources/proposals.csv";
+		rml:referenceFormulation ql:CSV
+
+	];
+	rr:subjectMap [
+		a rr:SubjectMap;
+		rr:template "http://w3id.org/podio/resource/{PartiManifestoId}";
+	];
+	rr:predicateObjectMap [
+		rr:predicateMap [
+			a rr:PredicateMap;
+			rr:constant terms:hasPart;
+		];
+		rr:objectMap [
+			a rr:ObjectMap;
+			rr:template "http://w3id.org/podio/resource/{ProposalId}";
+			rr:termType rr:IRI
+		];
+	].
+
+
