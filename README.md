@@ -143,4 +143,4 @@ This notebook aggregates the outputs from all models. Generates summary tables a
 If new tasks or paths are added, the notebook may require minor adjustments.
 
 ## Acknowledgements
-**Annonymized**
+This work is supported by the Predoctoral Grant (PIPF-2022/COM-25947) of the Consejería de Educación, Ciencia y Universidades de la Comunidad de Madrid, Spain. The authors gratefully acknowledge the Universidad Politécnica de Madrid (www.upm.es) for providing computing resources on Magerit Supercomputer, as well as the computing resources provided through Grant IARAG CPP2023-010895 funded by MICIU/AEI/ 10.13039/501100011033 and by ERDF/EU.
